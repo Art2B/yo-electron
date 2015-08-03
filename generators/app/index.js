@@ -9,13 +9,13 @@ module.exports = yeoman.generators.Base.extend({
 
     // Have Yeoman greet the user.
     this.log(yosay(
-      'Welcome to the geometric ' + chalk.red('YoElectron') + ' generator!'
+      'Welcome to the geometric ' + chalk.red('Yo Electron') + ' generator!'
     ));
 
     var prompts = [{
       type: 'confirm',
-      name: 'someOption',
-      message: 'Would you like to enable this option?',
+      name: 'Sass',
+      message: 'Would you like to use Sass ?',
       default: true
     }];
 
@@ -23,35 +23,45 @@ module.exports = yeoman.generators.Base.extend({
       this.props = props;
       // To access props later use this.props.someOption;
 
+      if(this.props.Sass){
+        console.log('Sass enabled');
+        console.log(this.destinationPath());
+      }
+
+
       done();
     }.bind(this));
   },
 
-  writing: {
-    app: function () {
-      this.fs.copy(
-        this.templatePath('_package.json'),
-        this.destinationPath('package.json')
-      );
-      this.fs.copy(
-        this.templatePath('_bower.json'),
-        this.destinationPath('bower.json')
-      );
-    },
+  // writing: {
+  //   app: function () {
+  //     this.fs.copy(
+  //       this.templatePath('_package.json'),
+  //       this.destinationPath('package.json')
+  //     );
+  //     this.fs.copy(
+  //       this.templatePath('_bower.json'),
+  //       this.destinationPath('bower.json')
+  //     );
+  //     this.fs.copy(
+  //       this.templatePath('_index.html'),
+  //       this.destinationPath('index.html')
+  //     );
+  //   },
 
-    projectfiles: function () {
-      this.fs.copy(
-        this.templatePath('editorconfig'),
-        this.destinationPath('.editorconfig')
-      );
-      this.fs.copy(
-        this.templatePath('jshintrc'),
-        this.destinationPath('.jshintrc')
-      );
-    }
-  },
+  //   projectfiles: function () {
+  //     this.fs.copy(
+  //       this.templatePath('editorconfig'),
+  //       this.destinationPath('.editorconfig')
+  //     );
+  //     this.fs.copy(
+  //       this.templatePath('jshintrc'),
+  //       this.destinationPath('.jshintrc')
+  //     );
+  //   }
+  // },
 
-  install: function () {
-    this.installDependencies();
-  }
+  // install: function () {
+  //   this.installDependencies();
+  // }
 });
