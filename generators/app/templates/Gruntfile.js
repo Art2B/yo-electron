@@ -20,20 +20,43 @@ module.exports = function(grunt){
   grunt.initConfig({
     config: config,
 
+    <% if (useSass) { %>
+    sass: {
+      options: {
+        sourceMap: true,
+        sourceMapEmbed: true,
+        sourceMapContents: true,
+        includePaths: ['.']
+      },
+      dist: {
+        files: [{
+          expand: true,
+          cwd: 'APP_FOLDER_HERE/styles',
+          src: 'main.scss',
+          dest: '',
+          ext: '.css'
+        }]
+      }
+    },
+    <% } %>
+
+
     electron: {
       options: {
         appName: 'PUT TITLE HERE',
       },
-      your_target: {
-        dest: 'PUT APP BUILD FOLDER',
-        src: __dirname+'/app',
-        platforms: ['linux-x64']
+      build: {
+        options: {
+          dest: 'PUT APP BUILD FOLDER',
+          src: __dirname+'/app',
+          platforms: ['linux-x64']
+        }
       },
     }
   });
 
   grunt.registerTask('build', [
-    'electron'
+    'electron:build'
   ]);
 
 

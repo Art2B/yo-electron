@@ -22,26 +22,47 @@ module.exports = yeoman.generators.Base.extend({
       name: 'title',
       message: 'Your project name'
     }, {
-      type: 'confirm',
-      name: 'Sass',
-      message: 'Would you like to use Sass ?',
-      default: true
-    // }, {
-    //   type: 'confirm',
-    //   name: 'Angular',
-    //   message: 'Would you like to use Angular ,',
-    //   default: true
+      type: 'checkbox',
+      name: 'features',
+      message: 'Maybe add some nice features ?',
+      choices: [{
+        name: 'Sass',
+        value: 'includeSass',
+        checked: false
+      }, {
+        name: 'jQuery',
+        value: 'includejQuery',
+        checked: false
+      // }, {
+      //   name: 'Angular',
+      //   value: 'includeAngular',
+      //   checked: false,
+      }]
     }];
 
-    this.prompt(prompts, function (props) {
-      this.props = props;
+    this.prompt(prompts, function (answers) {
+      var features = answers.features;
       // To access props later use this.props.someOption;
+      this.project = {
+        title: answers.title
+      };
+
+      function hasFeature(feat) {
+        return features && features.indexOf(feat) !== -1;
+      };
+
+      this.features = {};
+      this.features.sass = hasFeature('includeSass');
+      this.features.jquery = hasFeature('includejQuery');
+      // this.features.angular = hasFeature('includeAngular');
+
+
       done();
     }.bind(this));
   },
   styles: function(){
     var _self = this;
-    if(this.props.Sass){
+    if(this.features.sass){
       new Download({mode: '755', extract: true})
         .get('https://github.com/Art2B/starter-sass/archive/master.zip')
         .dest(_self.destinationPath())
@@ -58,7 +79,7 @@ module.exports = yeoman.generators.Base.extend({
   },
   scripts: function(){
     var _self = this;
-    // if(this.props.Angular){
+    // if(this.features.angular){
     //   console.log('use angular');
     //   // new Download({mode: '755', extract: true})
     //   //   .get('https://github.com/Art2B/starter-angular/archive/master.zip')
@@ -92,12 +113,12 @@ module.exports = yeoman.generators.Base.extend({
       this.fs.copyTpl(
         this.templatePath('_index.html'),
         this.destinationPath('index.html'),
-        { title: this.props.title, year: new Date().getFullYear()}
+        { title: this.project.title, year: new Date().getFullYear()}
       );
     },
     bower: function(){
       var bower = {
-        name: this.props.title,
+        name: this.project.title,
         version: '0.1.0',
         dependencies: {
           'jquery': '~2.1.4',
@@ -109,12 +130,17 @@ module.exports = yeoman.generators.Base.extend({
     },
     npm: function(){
       var packages = {
-        name: this.props.title,
+        name: this.project.title,
         version: '0.1.0',
         dependencies: {
+          'grunt': '~0.4.5',
           'grunt-electron-builder': '~0.2.1'
         }
       };
+
+      if(this.features.sass){
+        packages.dependencies['grunt-contrib-sass'] = '~0.9.2';
+      }
 
       this.fs.writeJSON('package.json', packages);
     },
@@ -123,8 +149,9 @@ module.exports = yeoman.generators.Base.extend({
         this.templatePath('Gruntfile.js'),
         this.destinationPath('Gruntfile.js'),
         {
-          title: this.props.title,
-          pkg: this.pkg
+          title: this.project.title,
+          pkg: this.pkg,
+          useSass: this.features.sass
         }
       );
     },
