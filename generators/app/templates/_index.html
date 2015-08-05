@@ -2,9 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Document</title>
+  <title><%= title %></title>
 </head>
 <body>
-  <h1></h1>
+  <header>
+    <h1><%= title %></h1>
+    <p>Welcome in your new yo-electron app !</p>
+  </header>
+  <main>
+    <p>This generator is made to help your kickstart your <a href="http://electron.atom.io/">Electron</a> app. It use <a href="http://bower.io/">Bower</a>, <a href="http://gruntjs.com/">Grunt</a> and <a href="https://www.npmjs.com/">Npm</a> for task-running and package management.</p>
+    <p>Build what you want and make your app with <code>grunt build</code>. And then, Conquer the world !</p>
+    <p> And if you like it, don't forget to star it on Github and tweet about it !
+    <br>I hope you'll enjoy it.</p>
+  </main>
+  <footer>
+    &copy; <%= year %> <%= title %> 
+  </footer>
 </body>
 </html>

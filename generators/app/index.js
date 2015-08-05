@@ -6,7 +6,10 @@ var Download = require('download');
 var fs = require('fs');
 
 module.exports = yeoman.generators.Base.extend({
-  prompting: function () {
+  init: function () {
+    this.pkg = require('../../package.json');
+  },
+  setup: function () {
     var done = this.async();
 
     // Have Yeoman greet the user.
@@ -15,15 +18,19 @@ module.exports = yeoman.generators.Base.extend({
     ));
 
     var prompts = [{
+      type: 'input',
+      name: 'title',
+      message: 'Your project name'
+    }, {
       type: 'confirm',
       name: 'Sass',
       message: 'Would you like to use Sass ?',
       default: true
-    }, {
-      type: 'confirm',
-      name: 'Angular',
-      message: 'Would you like to use Angular ,',
-      default: true
+    // }, {
+    //   type: 'confirm',
+    //   name: 'Angular',
+    //   message: 'Would you like to use Angular ,',
+    //   default: true
     }];
 
     this.prompt(prompts, function (props) {
@@ -51,9 +58,16 @@ module.exports = yeoman.generators.Base.extend({
   },
   scripts: function(){
     var _self = this;
-    if(this.props.Angular){
-      console.log('use angular');
-    } else {
+    // if(this.props.Angular){
+    //   console.log('use angular');
+    //   // new Download({mode: '755', extract: true})
+    //   //   .get('https://github.com/Art2B/starter-angular/archive/master.zip')
+    //   //   .dest(_self.destinationPath())
+    //   //   .run(function(err, files){
+    //   //     fs.renameSync(_self.destinationPath()+'/starter-js-master', _self.destinationPath()+'/scripts');
+    //   //     fs.unlinkSync(_self.destinationPath()+'/scripts/README.md');
+    //   //   });
+    // } else {
       new Download({mode: '755', extract: true})
         .get('https://github.com/Art2B/starter-js/archive/master.zip')
         .dest(_self.destinationPath())
@@ -61,7 +75,7 @@ module.exports = yeoman.generators.Base.extend({
           fs.renameSync(_self.destinationPath()+'/starter-js-master', _self.destinationPath()+'/scripts');
           fs.unlinkSync(_self.destinationPath()+'/scripts/README.md');
         });
-    }
+    // }
   },
   assets: function(){
     this.fs.copy(this.templatePath('assets/*'), this.destinationPath('assets/'));
@@ -72,23 +86,48 @@ module.exports = yeoman.generators.Base.extend({
   writing: {
     app: function () {
       this.fs.copy(
-        this.templatePath('_package.json'),
-        this.destinationPath('package.json')
-      );
-      this.fs.copy(
-        this.templatePath('_bower.json'),
-        this.destinationPath('bower.json')
-      );
-      this.fs.copy(
         this.templatePath('_main.js'),
         this.destinationPath('main.js')
       );
-      this.fs.copy(
+      this.fs.copyTpl(
         this.templatePath('_index.html'),
-        this.destinationPath('index.html')
+        this.destinationPath('index.html'),
+        { title: this.props.title, year: new Date().getFullYear()}
       );
     },
+    bower: function(){
+      var bower = {
+        name: this.props.title,
+        version: '0.1.0',
+        dependencies: {
+          'jquery': '~2.1.4',
+          'underscore': '~1.8.3'
+        }
+      };
 
+      this.fs.writeJSON('bower.json', bower);
+    },
+    npm: function(){
+      var packages = {
+        name: this.props.title,
+        version: '0.1.0',
+        dependencies: {
+          'grunt-electron-builder': '~0.2.1'
+        }
+      };
+
+      this.fs.writeJSON('package.json', packages);
+    },
+    grunt: function(){
+      this.fs.copyTpl(
+        this.templatePath('Gruntfile.js'),
+        this.destinationPath('Gruntfile.js'),
+        {
+          title: this.props.title,
+          pkg: this.pkg
+        }
+      );
+    },
     projectfiles: function () {
       this.fs.copy(
         this.templatePath('editorconfig'),
@@ -100,7 +139,7 @@ module.exports = yeoman.generators.Base.extend({
       );
     }
   },
-
+  // Uncomment to final tests, will install everything missing
   // install: function () {
   //   this.installDependencies();
   // }
