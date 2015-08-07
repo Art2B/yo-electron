@@ -22,24 +22,28 @@ module.exports = function(grunt){
 
     <% if (useSass) { %>
     sass: {
-      options: {
-        sourceMap: true,
-        sourceMapEmbed: true,
-        sourceMapContents: true,
-        includePaths: ['.']
-      },
       dist: {
         files: [{
           expand: true,
           cwd: 'APP_FOLDER_HERE/styles',
           src: 'main.scss',
-          dest: '',
+          dest: './styles',
           ext: '.css'
         }]
       }
     },
     <% } %>
-
+    wiredep: {
+      dist: {
+        src: [
+          'index.html',
+          'views/*.html'
+        ],
+        options: {
+          
+        }
+      }
+    },
 
     electron: {
       options: {
@@ -54,6 +58,11 @@ module.exports = function(grunt){
       },
     }
   });
+
+  grunt.registerTask('serve', [
+    'sass',
+    'wiredep'
+  ]);
 
   grunt.registerTask('build', [
     'electron:build'

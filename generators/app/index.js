@@ -121,10 +121,12 @@ module.exports = yeoman.generators.Base.extend({
         name: this.project.title,
         version: '0.1.0',
         dependencies: {
-          'jquery': '~2.1.4',
           'underscore': '~1.8.3'
         }
       };
+      if(this.features.jquery){
+        bower.dependencies['jquery'] = '~2.1.4';
+      }
 
       this.fs.writeJSON('bower.json', bower);
     },
@@ -134,7 +136,10 @@ module.exports = yeoman.generators.Base.extend({
         version: '0.1.0',
         dependencies: {
           'grunt': '~0.4.5',
-          'grunt-electron-builder': '~0.2.1'
+          'grunt-electron-builder': '~0.2.1',
+          'grunt-wiredep': '~2.0.0',
+          'jit-grunt': '^0.9.1',
+          'time-grunt': '~1.2.1'
         }
       };
 
@@ -167,7 +172,7 @@ module.exports = yeoman.generators.Base.extend({
     }
   },
   // Uncomment to final tests, will install everything missing
-  // install: function () {
-  //   this.installDependencies();
-  // }
+  install: function () {
+    this.installDependencies();
+  }
 });
